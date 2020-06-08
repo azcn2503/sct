@@ -11,7 +11,8 @@ import {
 
 function mapStateToProps(state) {
   return {
-    plugins: Object.values(state.plugins.byId)
+    plugins: Object.values(state.plugins.byId),
+    enabledPlugins: state.plugins.enabledIds.map(id => state.plugins.byId[id])
   };
 }
 

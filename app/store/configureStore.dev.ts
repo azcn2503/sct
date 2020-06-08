@@ -3,8 +3,9 @@ import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
+
+import persistenceMiddleware, { getSettings } from './persistence-middleware';
 import createRootReducer from '../reducers';
-// import * as counterActions from '../actions/counter';
 
 declare global {
   interface Window {
@@ -21,10 +22,10 @@ declare global {
 }
 
 const history = createHashHistory();
-
 const rootReducer = createRootReducer(history);
+const initialState = getSettings();
 
-const configureStore = (initialState?: any) => {
+const configureStore = () => {
   // Redux Configuration
   const middleware = [];
   const enhancers = [];
@@ -46,6 +47,8 @@ const configureStore = (initialState?: any) => {
   // Router Middleware
   const router = routerMiddleware(history);
   middleware.push(router);
+
+  middleware.push(persistenceMiddleware);
 
   // Redux DevTools Configuration
   const actionCreators = {

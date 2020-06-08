@@ -30,6 +30,13 @@ export default function reducer(state = defaultState, action) {
       };
     }
 
+    case actions.DISABLE_PLUGIN: {
+      return {
+        ...state,
+        enabledIds: state.enabledIds.filter(id => id !== action.id)
+      };
+    }
+
     default:
       return state;
   }

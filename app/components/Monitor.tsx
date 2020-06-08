@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { Tail } from 'tail';
 
 import * as logActions from '../actions/log';
-import { getCompiledPlugin } from '../utils/plugins';
+import { compilePlugin, getCompiledPlugin } from '../utils/plugins';
 import * as activityActions from '../actions/activity';
+import { Plugin } from '../types';
 
 function mapStateToProps(state) {
   return {
@@ -63,6 +64,16 @@ function Monitor({
       tail.current.on('line', onLine);
     }
   }, [logFilePath, enabledPlugins]);
+
+  // Compile enabled plugins on first mount
+  useEffect(() => {
+    enabledPlugins.forEach((plugin: Plugin) =>
+      compilePlugin({
+        id: plugin.manifest.id,
+        script: plugin.script
+      })
+    );
+  }, []);
 
   return null;
 }

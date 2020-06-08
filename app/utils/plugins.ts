@@ -3,7 +3,6 @@ class MissingExportError extends Error {}
 const compiledPlugins = {};
 
 export function compilePlugin({ id, script }) {
-  console.group('compile plugin', id);
   const compiled = eval(script);
   if (!compiled.plugin) {
     throw new MissingExportError(
@@ -11,8 +10,6 @@ export function compilePlugin({ id, script }) {
     );
   }
   compiledPlugins[id] = compiled.plugin;
-  console.log('compiledPlugins', compiledPlugins);
-  console.groupEnd();
   return compiled;
 }
 

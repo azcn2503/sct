@@ -9,34 +9,40 @@ type PluginsProps = {
   enabledPlugins: Plugin[];
   plugins: Plugin[];
   addPlugin(plugin: Plugin): void;
+  enablePlugin({ id: string }: any): void;
+  disablePlugin({ id: string }: any): void;
 };
 
 function Plugins(props: PluginsProps) {
-  function onChangeFile(e: any) {
+  function isPluginEnabled(plugin: Plugin): boolean {
+    return props.enabledPlugins.some(p => p.manifest.id === plugin.manifest.id);
+  }
+
+  async function onChangeFile(e: any) {
     const [file] = e.target.files || [];
     if (!file) return;
     const folderPath = path.dirname(file.path);
-    fs.readFile(
-      file.path,
-      { encoding: 'utf8' },
-      (manifestErr, manifestData) => {
-        if (manifestErr) return;
-        const manifest = JSON.parse(manifestData);
-        const pluginPath = path.resolve(folderPath, manifest.plugin);
-        fs.readFile(
-          pluginPath,
-          { encoding: 'utf8' },
-          (pluginErr, pluginData) => {
-            if (pluginErr) return;
-            props.addPlugin({
-              manifest,
-              path: folderPath,
-              script: pluginData
-            });
-          }
-        );
-      }
-    );
+    try {
+      const manifestData = fs.readFileSync(file.path, { encoding: 'utf8' });
+      const manifest = JSON.parse(manifestData);
+      const pluginPath = path.resolve(folderPath, manifest.plugin);
+      const pluginData = fs.readFileSync(pluginPath, { encoding: 'utf8' });
+      props.addPlugin({
+        manifest,
+        path: folderPath,
+        script: pluginData
+      });
+    } catch (ex) {
+      console.error('Error loading plugin', ex);
+    }
+  }
+
+  function onClickTogglePlugin(e: React.MouseEvent, plugin: Plugin) {
+    if (isPluginEnabled(plugin)) {
+      props.disablePlugin({ id: plugin.manifest.id });
+    } else {
+      props.enablePlugin({ id: plugin.manifest.id });
+    }
   }
 
   return (
@@ -54,9 +60,9 @@ function Plugins(props: PluginsProps) {
               {plugin.script.length} bytes)
               <button
                 type="button"
-                onClick={() => props.enablePlugin({ id: plugin.manifest.id })}
+                onClick={e => onClickTogglePlugin(e, plugin)}
               >
-                Enable
+                {isPluginEnabled(plugin) ? 'Disable' : 'Enable'}
               </button>
             </li>
           ))}

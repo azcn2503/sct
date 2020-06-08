@@ -5,7 +5,7 @@ import styles from './Settings.scss';
 export default function Settings(props: any) {
   return (
     <div className={styles.settings}>
-      Path to log file:{' '}
+      <h3>Monitor log file</h3>
       <input
         type="file"
         onChange={e => {
@@ -14,6 +14,12 @@ export default function Settings(props: any) {
           }
         }}
       />
+      <br />
+      {props.logFilePath ? (
+        <div>Currently monitoring: {props.logFilePath}</div>
+      ) : (
+        <div>No log file is currently being monitored.</div>
+      )}
     </div>
   );
 }
