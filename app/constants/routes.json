@@ -1,0 +1,17 @@
+{
+  "HOME": {
+    "path": "/",
+    "icon": null,
+    "label": "Main"
+  },
+  "PLUGINS": {
+    "path": "/plugins",
+    "icon": null,
+    "label": "Plugins"
+  },
+  "SETTINGS": {
+    "path": "/settings",
+    "icon": null,
+    "label": "Settings"
+  }
+}

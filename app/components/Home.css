@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  flex-grow: 1;
+}
+
+.encounterList {
+  width: 200px;
+  background-color: #fff;
+  border-right: 1px solid #ddd;
+}
+
+.resultView {
+  flex-grow: 1;
+  background-color: #fff;
+}

@@ -1,0 +1,29 @@
+.nav {
+  display: flex;
+  background-color: darkblue;
+  color: white;
+  // border: 10px solid white;
+  // border-width: 0 0 10px 0;
+
+  .tab {
+    display: inline-block;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    margin-right: 10px;
+    border-radius: 2px 2px 0 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &.isActive {
+      background-color: white;
+      color: black;
+    }
+
+    &:not(.isActive):hover {
+      background-color: rgba(white, 0.05);
+    }
+  }
+}
