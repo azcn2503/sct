@@ -1,19 +1,12 @@
+import db from '../db/configureDatabase';
+
 export const REGISTER_DAMAGE = 'REGISTER_DAMAGE';
 export const END_ENCOUNTER = 'END_ENCOUNTER';
 export const SELECT_ENCOUNTER = 'SELECT_ENCOUNTER';
-export const REGISTER_ACTOR_NAME_REWRITE = 'REGISTER_ACTOR_NAME_REWRITE';
 
 let encounterActive = false;
 let encounterId = 0;
 let encounterTimeout = null;
-
-export function registerActorNameRewrite({ from, to }) {
-  return {
-    type: REGISTER_ACTOR_NAME_REWRITE,
-    from,
-    to
-  };
-}
 
 export function endEncounter() {
   return function endEncounterThunk(dispatch) {
@@ -35,6 +28,9 @@ export function registerDamage(payload) {
     encounterTimeout = setTimeout(() => {
       dispatch(endEncounter());
     }, 4000);
+
+    // TODO: work out what needs to go in db, and what can be global state
+    db.activity.add(payload);
 
     // Register the damage, creating new encounter if necessary
     dispatch({
