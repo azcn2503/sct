@@ -21,7 +21,6 @@ body,
 input,
 textarea,
 select {
-  font-family: sans-serif;
+  font-family: Helvetica, sans-serif;
   font-size: 10pt;
-  -webkit-font-smoothing: none;
 }
