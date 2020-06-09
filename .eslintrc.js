@@ -11,7 +11,9 @@ module.exports = {
     'no-eval': 'off', // Eval is required by plugins
     'react/jsx-one-expression-per-line': 'off', // Prettier,
     'react/destructuring-assignment': 'off', // Redux actions often have the same name as props, requiring prop name juggling if this rule is active,
-    'import/no-named-as-default': 'off'
+    'import/no-named-as-default': 'off',
+    'react/jsx-curly-newline': 'off',
+    'react/no-array-index-key': 'off'
   },
   settings: {
     'import/resolver': {

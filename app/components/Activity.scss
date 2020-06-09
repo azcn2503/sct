@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  flex-grow: 1;
+}
+
+.encounterList {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  border-right: 1px solid #dddddd;
+  background-color: #ffffff;
+  list-style-type: none;
+
+  .encounter {
+    button {
+      padding: 5px 10px;
+      width: 100%;
+      outline: none;
+      border: none;
+      background: inherit;
+      color: inherit;
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+    }
+    &:hover,
+    &.isActive {
+      background-color: rgba(black, 0.05);
+    }
+  }
+}
+
+.resultView {
+  flex-grow: 1;
+  background-color: #ffffff;
+}

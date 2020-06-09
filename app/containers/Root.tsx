@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { hot } from 'react-hot-loader/root';
 import { History } from 'history';
 
-import Activity from '../components/Activity';
+import Status from '../components/Status';
 import Monitor from '../components/Monitor';
 import TitleProvider from '../components/TitleProvider';
 import TopNav from '../components/TopNav';
@@ -27,7 +27,7 @@ const Root = ({ store, history }: Props) => {
           <main className={styles.routes}>
             <Routes />
           </main>
-          <Activity />
+          <Status />
         </div>
       </ConnectedRouter>
     </Provider>

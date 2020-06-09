@@ -1,8 +1,8 @@
 {
-  "HOME": {
-    "path": "/",
+  "ACTIVITY": {
+    "path": "/activity",
     "icon": null,
-    "label": "Main"
+    "label": "Activity"
   },
   "PLUGINS": {
     "path": "/plugins",

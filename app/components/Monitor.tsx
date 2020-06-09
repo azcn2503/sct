@@ -17,7 +17,9 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setLastLogLine: args => dispatch(logActions.setLastLogLine(args)),
-    registerDamage: args => dispatch(activityActions.registerDamage(args))
+    registerDamage: args => dispatch(activityActions.registerDamage(args)),
+    registerActorNameRewrite: args =>
+      dispatch(activityActions.registerActorNameRewrite(args))
   };
 }
 
@@ -26,7 +28,8 @@ function Monitor({
   enabledPlugins,
   logFilePath,
   setLastLogLine,
-  registerDamage
+  registerDamage,
+  registerActorNameRewrite
 }: any) {
   const tail = useRef(null);
 
@@ -40,8 +43,10 @@ function Monitor({
       }
       compiledPlugin({
         line,
+        logFilePath,
         setLastLogLine,
-        registerDamage
+        registerDamage,
+        registerActorNameRewrite
       });
       if (debug) {
         console.groupEnd();
