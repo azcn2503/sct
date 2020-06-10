@@ -17,7 +17,8 @@ export default function reducer(state = defaultState, action) {
           [action.manifest.id]: {
             manifest: action.manifest,
             path: action.path,
-            script: action.script
+            script: action.script,
+            settings: action.settings
           }
         }
       };

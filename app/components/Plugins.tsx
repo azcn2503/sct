@@ -4,6 +4,7 @@ import path from 'path';
 
 import styles from './Plugins.scss';
 import { Plugin } from '../types';
+import { compilePluginMetadata } from '../utils/plugins';
 
 type PluginsProps = {
   enabledPlugins: Plugin[];
@@ -23,12 +24,12 @@ function Plugins(props: PluginsProps) {
     if (!file) return;
     const folderPath = path.dirname(file.path);
     try {
-      const manifestData = fs.readFileSync(file.path, { encoding: 'utf8' });
-      const manifest = JSON.parse(manifestData);
-      const pluginPath = path.resolve(folderPath, manifest.plugin);
-      const pluginData = fs.readFileSync(pluginPath, { encoding: 'utf8' });
+      const pluginData = fs.readFileSync(file.path, { encoding: 'utf8' });
+      if (!pluginData) return;
+      const { manifest, settings } = compilePluginMetadata(pluginData);
       props.addPlugin({
         manifest,
+        settings,
         path: folderPath,
         script: pluginData
       });
