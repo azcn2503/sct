@@ -34,4 +34,26 @@ input[type='number'] {
   border: 1px solid black;
   padding: 5px 10px;
   border-radius: 2px;
+  outline: none;
+
+  &:focus,
+  &:active {
+    box-shadow: 0 0 10px rgba(darkblue, 0.2);
+    border-color: darkblue;
+  }
+}
+
+input[type='button'],
+input[type='file'],
+button {
+  cursor: pointer;
+}
+
+button {
+  border: none;
+  border-radius: 2px;
+  background-color: lightgrey;
+  font: inherit;
+  padding: 5px 10px;
+  outline: none;
 }
