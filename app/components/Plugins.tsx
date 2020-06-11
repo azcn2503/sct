@@ -1,7 +1,9 @@
-import React, { ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import fs from 'fs';
 import path from 'path';
 
+import Tabs from './Tabs';
+import Tab from './Tab';
 import styles from './Plugins.scss';
 import { Plugin } from '../types';
 import { compilePluginMetadata } from '../utils/plugins';
@@ -15,6 +17,14 @@ type PluginsProps = {
 };
 
 function Plugins(props: PluginsProps) {
+  const [activePluginTab, setActivePluginTab] = useState(null);
+
+  useEffect(() => {
+    if (props.plugins.length && !activePluginTab) {
+      setActivePluginTab(props.plugins[0].manifest.id);
+    }
+  }, [props.plugins]);
+
   function isPluginEnabled(plugin: Plugin): boolean {
     return props.enabledPlugins.some(p => p.manifest.id === plugin.manifest.id);
   }
@@ -46,6 +56,10 @@ function Plugins(props: PluginsProps) {
     }
   }
 
+  const activePlugin = props.plugins.find(
+    p => p.manifest.id === activePluginTab
+  );
+
   return (
     <div className={styles.plugins}>
       <h3>Load plugin</h3>
@@ -54,20 +68,33 @@ function Plugins(props: PluginsProps) {
       </div>
       <h3>Plugins</h3>
       {props.plugins.length > 0 && (
-        <ul>
-          {props.plugins.map(plugin => (
-            <li key={plugin.manifest.id}>
-              {plugin.manifest.id} - {plugin.manifest.name} (
-              {plugin.script.length} bytes)
+        <>
+          <Tabs
+            value={activePluginTab}
+            onChange={value => setActivePluginTab(value)}
+          >
+            {props.plugins.map(plugin => (
+              <Tab key={plugin.manifest.id} value={plugin.manifest.id}>
+                {isPluginEnabled(plugin) && (
+                  <span className={styles.enabledPlugin} />
+                )}
+                {plugin.manifest.name}
+              </Tab>
+            ))}
+          </Tabs>
+          {activePlugin && (
+            <div className={styles.pluginDetails}>
+              {activePlugin.manifest.id} - {activePlugin.manifest.name} (
+              {activePlugin.script.length} bytes)
               <button
                 type="button"
-                onClick={e => onClickTogglePlugin(e, plugin)}
+                onClick={e => onClickTogglePlugin(e, activePlugin)}
               >
-                {isPluginEnabled(plugin) ? 'Disable' : 'Enable'}
+                {isPluginEnabled(activePlugin) ? 'Disable' : 'Enable'}
               </button>
-            </li>
-          ))}
-        </ul>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

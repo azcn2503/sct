@@ -29,9 +29,6 @@ export function registerDamage(payload) {
       dispatch(endEncounter());
     }, 4000);
 
-    // TODO: work out what needs to go in db, and what can be global state
-    db.activity.add(payload);
-
     // Register the damage, creating new encounter if necessary
     dispatch({
       type: REGISTER_DAMAGE,

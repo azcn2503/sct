@@ -1,0 +1,17 @@
+.tab {
+  background-color: #eee;
+  outline: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid black;
+  border-radius: 2px 2px 0 0;
+  margin-right: 5px;
+  display: flex;
+  align-items: center;
+
+  &.isActive {
+    background-color: white;
+    border-bottom-color: white;
+  }
+}

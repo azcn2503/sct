@@ -1,14 +1,5 @@
-import Dexie from 'dexie';
+import PouchDB from 'pouchdb';
 
-if (process.env.NODE_ENV === 'development') {
-  Dexie.debug = true;
-}
-const db = new Dexie('SCT');
-
-// TODO: Get db indices set up
-db.version(1).stores({
-  encounters: '++id, targetName',
-  activity: 'encounterId, sourceName, targetName, amount, type, special'
-});
+const db = new PouchDB('SCT');
 
 export default db;
