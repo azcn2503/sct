@@ -1,11 +1,19 @@
 import React, { Children, useState } from 'react';
 import classNames from 'classnames';
 
-import Tab from './Tab';
+import Tab, { TabProps } from './Tab';
 import styles from './Tabs.scss';
 
-export default function Tabs(props) {
-  function onChange(value) {
+type TabsProps = {
+  value?: string;
+  children: React.Component & {
+    props: TabProps;
+  };
+  onChange(value: string): void;
+};
+
+export default function Tabs(props: TabsProps) {
+  function onChange(value: string) {
     props.onChange(value);
   }
 

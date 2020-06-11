@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import fs from 'fs';
 import path from 'path';
+import classNames from 'classnames';
 
 import Tabs from './Tabs';
 import Tab from './Tab';
@@ -39,12 +40,16 @@ function Plugins(props: PluginsProps) {
     try {
       const pluginString = fs.readFileSync(file.path, { encoding: 'utf8' });
       if (!pluginString) return;
-      const { manifest, settingsSchema } = compilePluginMetadata(pluginString, {
-        logFilePath: props.logFilePath
-      });
+      const { manifest, settingsSchema, settings } = compilePluginMetadata(
+        pluginString,
+        {
+          logFilePath: props.logFilePath
+        }
+      );
       props.addPlugin({
         manifest,
         settingsSchema,
+        settings,
         path: folderPath,
         script: pluginString
       });
@@ -78,14 +83,21 @@ function Plugins(props: PluginsProps) {
             value={activePluginTab}
             onChange={value => setActivePluginTab(value)}
           >
-            {props.plugins.map(plugin => (
-              <Tab key={plugin.manifest.id} value={plugin.manifest.id}>
-                {isPluginEnabled(plugin) && (
-                  <span className={styles.enabledPlugin} />
-                )}
-                {plugin.manifest.name}
-              </Tab>
-            ))}
+            {props.plugins.map(plugin => {
+              const isEnabled = isPluginEnabled(plugin);
+
+              return (
+                <Tab key={plugin.manifest.id} value={plugin.manifest.id}>
+                  <span
+                    className={classNames(styles.indicator, {
+                      [styles.isEnabled]: isEnabled,
+                      [styles.isDisabled]: !isEnabled
+                    })}
+                  />
+                  {plugin.manifest.name}
+                </Tab>
+              );
+            })}
           </Tabs>
           {activePlugin && (
             <PluginDetails

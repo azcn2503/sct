@@ -3,7 +3,14 @@ import classNames from 'classnames';
 
 import styles from './Tab.scss';
 
-export default function Tab(props) {
+export type TabProps = {
+  isActive: boolean;
+  value: string;
+  children: React.ReactChildren;
+  onChange(value: string): void;
+};
+
+export default function Tab(props: TabProps) {
   return (
     <button
       type="button"

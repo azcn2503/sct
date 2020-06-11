@@ -1,4 +1,5 @@
 import * as utils from '../utils/plugins';
+import { Plugin } from '../types';
 
 export const ADD_PLUGIN = 'ADD_PLUGIN';
 export const ENABLE_PLUGIN = 'ENABLE_PLUGIN';
@@ -6,13 +7,20 @@ export const DISABLE_PLUGIN = 'DISABLE_PLUGIN';
 export const REMOVE_PLUGIN = 'REMOVE_PLUGIN';
 export const SET_PLUGIN_SETTINGS = 'SET_PLUGIN_SETTINGS';
 
-export function addPlugin({ manifest, path, script, settingsSchema }) {
+export function addPlugin({
+  manifest,
+  path,
+  script,
+  settingsSchema,
+  settings
+}: Plugin) {
   return {
     type: ADD_PLUGIN,
     manifest,
     path,
     script,
-    settingsSchema
+    settingsSchema,
+    settings
   };
 }
 

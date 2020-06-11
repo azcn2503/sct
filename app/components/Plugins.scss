@@ -3,11 +3,20 @@
   padding: 10px;
 }
 
-.enabledPlugin {
+.indicator {
   display: inline-block;
   margin-right: 5px;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background-color: green;
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(white, 0.8);
+
+  &.isEnabled {
+    background-color: green;
+    box-shadow: 0 0 10px green;
+  }
+
+  &.isDisabled {
+    background-color: red;
+  }
 }

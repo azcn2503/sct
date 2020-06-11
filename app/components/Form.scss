@@ -6,12 +6,13 @@
 
 .field {
   display: flex;
-  align-items: center;
-  margin-bottom: 5px;
+  flex-direction: column;
+  align-items: left;
+  margin-bottom: 10px;
 }
 
 .fieldLabel {
-  width: 30%;
+  width: 100%;
 }
 
 .fieldValue {

@@ -10,11 +10,12 @@ import {
   removePlugin,
   setPluginSettings
 } from '../actions/plugins';
+import { getEnabledPlugins } from '../reducers/plugins';
 
 function mapStateToProps(state) {
   return {
     plugins: Object.values(state.plugins.byId),
-    enabledPlugins: state.plugins.enabledIds.map(id => state.plugins.byId[id]),
+    enabledPlugins: getEnabledPlugins(state.plugins),
     logFilePath: state.settings.logFilePath
   };
 }

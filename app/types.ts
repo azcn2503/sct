@@ -2,8 +2,8 @@ export type Plugin = {
   manifest: PluginManifest;
   script: string;
   path: string;
-  settingsSchema: PluginSettingsSchemaField[];
-  settings: PluginSettings;
+  settingsSchema?: PluginSettingsSchemaField[];
+  settings?: PluginSettings;
 };
 
 export type PluginContext = {

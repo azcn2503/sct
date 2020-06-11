@@ -10,7 +10,7 @@ export const defaultState = {
 export default function reducer(state = defaultState, action) {
   switch (action.type) {
     case actions.ADD_PLUGIN: {
-      const { manifest, path, script, settingsSchema } = action;
+      const { manifest, path, script, settingsSchema, settings } = action;
       return {
         ...state,
         byId: {
@@ -19,7 +19,8 @@ export default function reducer(state = defaultState, action) {
             manifest,
             path,
             script,
-            settingsSchema
+            settingsSchema,
+            settings
           }
         }
       };
@@ -56,4 +57,8 @@ export default function reducer(state = defaultState, action) {
     default:
       return state;
   }
+}
+
+export function getEnabledPlugins(state) {
+  return state.enabledIds.map(id => state.byId[id]);
 }

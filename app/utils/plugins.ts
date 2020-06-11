@@ -4,15 +4,26 @@ import { Plugin, PluginContext } from '../types';
 
 const compiledPlugins = {};
 
+function generateDefaultSettings(settingsSchema) {
+  const settings = {};
+  settingsSchema.forEach(field => {
+    settings[field.id] = field.defaultValue;
+  });
+  return settings;
+}
+
 export function compilePluginMetadata(
   script: string,
   context: PluginContext
-): Partial<Plugin> {
+): Pick<Plugin, 'manifest' | 'settings' | 'settingsSchema'> {
   try {
     const { manifest = noop, settingsSchema = noop } = eval(script) || {};
+    const compiledSettingsSchema = settingsSchema(context);
+    const settings = generateDefaultSettings(compiledSettingsSchema);
     return {
       manifest: manifest(context),
-      settingsSchema: settingsSchema(context)
+      settingsSchema: compiledSettingsSchema,
+      settings
     };
   } catch (ex) {
     console.error('Plugin metadata failed', ex);
