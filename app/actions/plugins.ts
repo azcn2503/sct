@@ -6,13 +6,13 @@ export const DISABLE_PLUGIN = 'DISABLE_PLUGIN';
 export const REMOVE_PLUGIN = 'REMOVE_PLUGIN';
 export const SET_PLUGIN_SETTINGS = 'SET_PLUGIN_SETTINGS';
 
-export function addPlugin({ manifest, path, script, settings }) {
+export function addPlugin({ manifest, path, script, settingsSchema }) {
   return {
     type: ADD_PLUGIN,
     manifest,
     path,
     script,
-    settings
+    settingsSchema
   };
 }
 

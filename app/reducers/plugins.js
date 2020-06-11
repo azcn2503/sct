@@ -10,15 +10,16 @@ export const defaultState = {
 export default function reducer(state = defaultState, action) {
   switch (action.type) {
     case actions.ADD_PLUGIN: {
+      const { manifest, path, script, settingsSchema } = action;
       return {
         ...state,
         byId: {
           ...state.byId,
-          [action.manifest.id]: {
-            manifest: action.manifest,
-            path: action.path,
-            script: action.script,
-            settings: action.settings
+          [manifest.id]: {
+            manifest,
+            path,
+            script,
+            settingsSchema
           }
         }
       };
@@ -46,7 +47,7 @@ export default function reducer(state = defaultState, action) {
           ...state.byId,
           [id]: {
             ...state.byId[id],
-            userSettings: settings
+            settings
           }
         }
       };

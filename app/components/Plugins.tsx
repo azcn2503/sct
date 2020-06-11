@@ -39,12 +39,12 @@ function Plugins(props: PluginsProps) {
     try {
       const pluginString = fs.readFileSync(file.path, { encoding: 'utf8' });
       if (!pluginString) return;
-      const { manifest, settings } = compilePluginMetadata(pluginString, {
+      const { manifest, settingsSchema } = compilePluginMetadata(pluginString, {
         logFilePath: props.logFilePath
       });
       props.addPlugin({
         manifest,
-        settings,
+        settingsSchema,
         path: folderPath,
         script: pluginString
       });
