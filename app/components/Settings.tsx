@@ -15,13 +15,17 @@ export default function Settings(props: SettingsProps) {
       const { settingsSchema, settings } = compilePluginMetadata(
         plugin.script,
         {
+          plugin, // provide existing plugin to context for comparison
           logFilePath
         }
       );
       props.addPlugin({
         ...plugin,
         settingsSchema,
-        settings
+        settings: {
+          ...plugin.settings,
+          ...settings
+        }
       });
     });
   }

@@ -1,14 +1,27 @@
-import { noop } from 'lodash';
+import { noop, get } from 'lodash';
 
 import { Plugin, PluginContext } from '../types';
 
 const compiledPlugins = {};
 
-function generateDefaultSettings(settingsSchema) {
+function generateDefaultSettings(settingsSchema, context: PluginContext) {
+  const contextKeys = Object.keys(context);
   const settings = {};
-  settingsSchema.forEach(field => {
-    settings[field.id] = field.defaultValue;
-  });
+  if (context.plugin) {
+    // Plugin is being rebuilt, so only update settings that track changed keys
+    settingsSchema.forEach(field => {
+      if (
+        field.updateOn &&
+        field.updateOn.some(key => contextKeys.includes(key))
+      ) {
+        settings[field.id] = field.defaultValue;
+      }
+    });
+  } else {
+    settingsSchema.forEach(field => {
+      settings[field.id] = field.defaultValue;
+    });
+  }
   return settings;
 }
 
@@ -19,7 +32,7 @@ export function compilePluginMetadata(
   try {
     const { manifest = noop, settingsSchema = noop } = eval(script) || {};
     const compiledSettingsSchema = settingsSchema(context);
-    const settings = generateDefaultSettings(compiledSettingsSchema);
+    const settings = generateDefaultSettings(compiledSettingsSchema, context);
     return {
       manifest: manifest(context),
       settingsSchema: compiledSettingsSchema,
