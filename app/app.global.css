@@ -28,3 +28,10 @@ select {
   font-family: Helvetica, sans-serif;
   font-size: 10pt;
 }
+
+input[type='text'],
+input[type='number'] {
+  border: 1px solid black;
+  padding: 5px 10px;
+  border-radius: 2px;
+}

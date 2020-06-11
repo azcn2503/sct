@@ -8,5 +8,7 @@
     "postinstall": "yarn electron-rebuild"
   },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "pouchdb": "^7.2.1"
+  }
 }

@@ -2,10 +2,10 @@ import { noop } from 'lodash';
 
 const compiledPlugins = {};
 
-export function compilePluginMetadata(script) {
+export function compilePluginMetadata(script, context) {
   try {
     const { manifest = noop, settings = noop } = eval(script) || {};
-    return { manifest: manifest(), settings: settings() };
+    return { manifest: manifest(context), settings: settings(context) };
   } catch (ex) {
     console.error('Plugin metadata failed', ex);
     throw ex;

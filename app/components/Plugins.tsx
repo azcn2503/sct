@@ -4,6 +4,7 @@ import path from 'path';
 
 import Tabs from './Tabs';
 import Tab from './Tab';
+import PluginDetails from './PluginDetails';
 import styles from './Plugins.scss';
 import { Plugin } from '../types';
 import { compilePluginMetadata } from '../utils/plugins';
@@ -14,6 +15,8 @@ type PluginsProps = {
   addPlugin(plugin: Plugin): void;
   enablePlugin({ id: string }: any): void;
   disablePlugin({ id: string }: any): void;
+  logFilePath: string;
+  setPluginSettings(settings: any): void;
 };
 
 function Plugins(props: PluginsProps) {
@@ -34,14 +37,16 @@ function Plugins(props: PluginsProps) {
     if (!file) return;
     const folderPath = path.dirname(file.path);
     try {
-      const pluginData = fs.readFileSync(file.path, { encoding: 'utf8' });
-      if (!pluginData) return;
-      const { manifest, settings } = compilePluginMetadata(pluginData);
+      const pluginString = fs.readFileSync(file.path, { encoding: 'utf8' });
+      if (!pluginString) return;
+      const { manifest, settings } = compilePluginMetadata(pluginString, {
+        logFilePath: props.logFilePath
+      });
       props.addPlugin({
         manifest,
         settings,
         path: folderPath,
-        script: pluginData
+        script: pluginString
       });
     } catch (ex) {
       console.error('Error loading plugin', ex);
@@ -83,16 +88,12 @@ function Plugins(props: PluginsProps) {
             ))}
           </Tabs>
           {activePlugin && (
-            <div className={styles.pluginDetails}>
-              {activePlugin.manifest.id} - {activePlugin.manifest.name} (
-              {activePlugin.script.length} bytes)
-              <button
-                type="button"
-                onClick={e => onClickTogglePlugin(e, activePlugin)}
-              >
-                {isPluginEnabled(activePlugin) ? 'Disable' : 'Enable'}
-              </button>
-            </div>
+            <PluginDetails
+              plugin={activePlugin}
+              isEnabled={isPluginEnabled(activePlugin)}
+              onClickTogglePlugin={e => onClickTogglePlugin(e, activePlugin)}
+              setPluginSettings={props.setPluginSettings}
+            />
           )}
         </>
       )}

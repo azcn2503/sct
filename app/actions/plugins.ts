@@ -4,6 +4,7 @@ export const ADD_PLUGIN = 'ADD_PLUGIN';
 export const ENABLE_PLUGIN = 'ENABLE_PLUGIN';
 export const DISABLE_PLUGIN = 'DISABLE_PLUGIN';
 export const REMOVE_PLUGIN = 'REMOVE_PLUGIN';
+export const SET_PLUGIN_SETTINGS = 'SET_PLUGIN_SETTINGS';
 
 export function addPlugin({ manifest, path, script, settings }) {
   return {
@@ -37,5 +38,13 @@ export function removePlugin({ id }) {
   return {
     type: REMOVE_PLUGIN,
     id
+  };
+}
+
+export function setPluginSettings({ id, settings }) {
+  return {
+    type: SET_PLUGIN_SETTINGS,
+    id,
+    settings
   };
 }

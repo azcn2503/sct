@@ -38,6 +38,20 @@ export default function reducer(state = defaultState, action) {
       };
     }
 
+    case actions.SET_PLUGIN_SETTINGS: {
+      const { id, settings } = action;
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [id]: {
+            ...state.byId[id],
+            userSettings: settings
+          }
+        }
+      };
+    }
+
     default:
       return state;
   }

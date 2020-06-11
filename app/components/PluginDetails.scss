@@ -1,6 +1,9 @@
-.plugins {
+.pluginDetails {
   width: 100%;
-  padding: 10px;
+  position: relative;
+  z-index: 0;
+  padding: 5px 10px;
+  border: 1px solid black;
 }
 
 .enabledPlugin {
