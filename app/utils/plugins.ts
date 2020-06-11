@@ -1,8 +1,13 @@
 import { noop } from 'lodash';
 
+import { Plugin, PluginContext } from '../types';
+
 const compiledPlugins = {};
 
-export function compilePluginMetadata(script: string, context: any) {
+export function compilePluginMetadata(
+  script: string,
+  context: PluginContext
+): Partial<Plugin> {
   try {
     const { manifest = noop, settingsSchema = noop } = eval(script) || {};
     return {
@@ -15,7 +20,13 @@ export function compilePluginMetadata(script: string, context: any) {
   }
 }
 
-export function compilePlugin({ id, script }: any) {
+export function compilePlugin({
+  id,
+  script
+}: {
+  id: string;
+  script: string;
+}): Function {
   try {
     const { plugin } = eval(script) || {};
     compiledPlugins[id] = plugin;
