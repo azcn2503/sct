@@ -5,10 +5,8 @@ import Tab, { TabProps } from './Tab';
 import styles from './Tabs.scss';
 
 type TabsProps = {
-  value?: string;
-  children: React.Component & {
-    props: TabProps;
-  };
+  value?: string | null;
+  children: any;
   onChange(value: string): void;
 };
 

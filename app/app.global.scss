@@ -43,17 +43,6 @@ input[type='number'] {
   }
 }
 
-input[type='button'],
-input[type='file'],
-button {
-  cursor: pointer;
-}
-
-button {
-  border: none;
-  border-radius: 2px;
-  background-color: lightgrey;
-  font: inherit;
-  padding: 5px 10px;
-  outline: none;
+table {
+  border-collapse: collapse;
 }

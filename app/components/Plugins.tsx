@@ -16,12 +16,13 @@ type PluginsProps = {
   addPlugin(plugin: Plugin): void;
   enablePlugin({ id: string }: any): void;
   disablePlugin({ id: string }: any): void;
+  removePlugin({ id: string }: any): void;
   logFilePath: string;
   setPluginSettings(settings: any): void;
 };
 
 function Plugins(props: PluginsProps) {
-  const [activePluginTab, setActivePluginTab] = useState(null);
+  const [activePluginTab, setActivePluginTab] = useState<string | null>(null);
 
   useEffect(() => {
     if (props.plugins.length && !activePluginTab) {
@@ -66,6 +67,10 @@ function Plugins(props: PluginsProps) {
     }
   }
 
+  function onClickRemovePlugin(e: React.MouseEvent, plugin: Plugin) {
+    props.removePlugin({ id: plugin.manifest.id });
+  }
+
   const activePlugin = props.plugins.find(
     p => p.manifest.id === activePluginTab
   );
@@ -85,7 +90,6 @@ function Plugins(props: PluginsProps) {
           >
             {props.plugins.map(plugin => {
               const isEnabled = isPluginEnabled(plugin);
-
               return (
                 <Tab key={plugin.manifest.id} value={plugin.manifest.id}>
                   <span
@@ -94,7 +98,7 @@ function Plugins(props: PluginsProps) {
                       [styles.isDisabled]: !isEnabled
                     })}
                   />
-                  {plugin.manifest.name}
+                  <i className="fa-icon" /> {plugin.manifest.name}
                 </Tab>
               );
             })}
@@ -104,6 +108,7 @@ function Plugins(props: PluginsProps) {
               plugin={activePlugin}
               isEnabled={isPluginEnabled(activePlugin)}
               onClickTogglePlugin={e => onClickTogglePlugin(e, activePlugin)}
+              onClickRemovePlugin={e => onClickRemovePlugin(e, activePlugin)}
               setPluginSettings={props.setPluginSettings}
             />
           )}

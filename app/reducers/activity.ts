@@ -21,7 +21,8 @@ export default function reducer(state = defaultState, action: any) {
               activity: [payload],
               actorsByName: {}
             }
-          ]
+          ],
+          selectedEncounterId: id
         };
       }
       return {

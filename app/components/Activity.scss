@@ -4,11 +4,14 @@
 }
 
 .encounterList {
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-shrink: 0;
   margin: 0;
   padding: 0;
   width: 200px;
-  border-right: 1px solid #dddddd;
-  background-color: #ffffff;
+  border-right: 1px solid #ddd;
+  background-color: #fff;
   list-style-type: none;
 
   .encounter {
@@ -31,6 +34,11 @@
 }
 
 .resultView {
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex-direction: column-reverse;
   flex-grow: 1;
-  background-color: #ffffff;
+  justify-content: flex-end;
+  background-color: #fff;
 }

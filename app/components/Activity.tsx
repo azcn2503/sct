@@ -35,13 +35,17 @@ export default function Activity(props: any) {
         ))}
       </div>
       <div className={styles.resultView}>
-        {props.selectedEncounter && (
-          <ul>
-            {props.selectedEncounter.activity.map((activity, key) => (
-              <li key={key}>{JSON.stringify(activity)}</li>
-            ))}
-          </ul>
-        )}
+        {props.selectedEncounter &&
+          props.selectedEncounter.activity.map((activity, activityKey) => (
+            <div key={activityKey}>
+              {Object.entries(activity).map(([key, value]) => (
+                <div key={key}>
+                  {key}: <b>{value !== undefined && value.toString()}</b>
+                </div>
+              ))}
+              <hr />
+            </div>
+          ))}
       </div>
     </div>
   );

@@ -1,17 +1,33 @@
 import React from 'react';
 
+import Button from './Button';
 import Form from './Form';
 
 import styles from './PluginDetails.scss';
 
 export default function PluginDetails(props: any) {
+  const manifest = {
+    ...props.plugin.manifest,
+    size: `${props.plugin.script.length} bytes`
+  };
   return (
     <div className={styles.pluginDetails}>
-      {props.plugin.manifest.id} - {props.plugin.manifest.name} (
-      {props.plugin.script.length} bytes)
-      <button type="button" onClick={props.onClickTogglePlugin}>
+      <table>
+        <tbody>
+          {Object.entries(manifest).map(([key, value]) => (
+            <tr key={key}>
+              <td>{key}:</td>
+              <td>{value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <Button onClick={props.onClickTogglePlugin}>
         {props.isEnabled ? 'Disable' : 'Enable'}
-      </button>
+      </Button>{' '}
+      <Button type="button" onClick={props.onClickRemovePlugin}>
+        Remove
+      </Button>
       {props.plugin.settingsSchema.length > 0 && (
         <>
           <h3>Plugin settings</h3>

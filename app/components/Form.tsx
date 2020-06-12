@@ -17,7 +17,7 @@ function FieldValue(props: any) {
                 type="number"
                 defaultValue={props.defaultValue}
                 onChange={e =>
-                  props.onChange({ id: props.id, value: e.target.value })
+                  props.onChange({ id: props.id, value: +e.target.value })
                 }
               />
             );

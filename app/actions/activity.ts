@@ -1,5 +1,3 @@
-import db from '../db/configureDatabase';
-
 export const REGISTER_DAMAGE = 'REGISTER_DAMAGE';
 export const END_ENCOUNTER = 'END_ENCOUNTER';
 export const SELECT_ENCOUNTER = 'SELECT_ENCOUNTER';
@@ -10,6 +8,7 @@ let encounterTimeout = null;
 
 export function endEncounter() {
   return function endEncounterThunk(dispatch) {
+    clearTimeout(encounterTimeout);
     dispatch({
       type: END_ENCOUNTER,
       id: encounterId

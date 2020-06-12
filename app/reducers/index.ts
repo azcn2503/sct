@@ -5,6 +5,7 @@ import settings from './settings';
 import log from './log';
 import plugins from './plugins';
 import activity from './activity';
+import status from './status';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
@@ -12,6 +13,9 @@ export default function createRootReducer(history: History) {
     settings,
     log,
     plugins,
-    activity
+    activity,
+    status
   });
 }
+
+export type RootState = ReturnType<typeof createRootReducer>;

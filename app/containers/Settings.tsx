@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 
 import SettingsComponent from '../components/Settings';
 import { setLogFilePath } from '../actions/settings';
-import { getEnabledPlugins } from '../reducers/plugins';
+import { getPlugins } from '../reducers/plugins';
 import { addPlugin } from '../actions/plugins';
 
 function mapStateToProps(state) {
   return {
     ...state.settings,
-    enabledPlugins: getEnabledPlugins(state.plugins)
+    plugins: getPlugins(state.plugins)
   };
 }
 

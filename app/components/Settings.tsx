@@ -5,13 +5,13 @@ import styles from './Settings.scss';
 import { Plugin } from '../types';
 
 type SettingsProps = {
-  enabledPlugins: Plugin[];
+  plugins: Plugin[];
   addPlugin(plugin: Plugin): void;
 };
 
 export default function Settings(props: SettingsProps) {
-  function reinitialiseEnabledPlugins(logFilePath: string) {
-    props.enabledPlugins.forEach(plugin => {
+  function reinitialisePlugins(logFilePath: string) {
+    props.plugins.forEach(plugin => {
       const { settingsSchema, settings } = compilePluginMetadata(
         plugin.script,
         {
@@ -38,7 +38,7 @@ export default function Settings(props: SettingsProps) {
         onChange={e => {
           if (e.target.files) {
             props.setLogFilePath(e.target.files[0].path);
-            reinitialiseEnabledPlugins(e.target.files[0].path);
+            reinitialisePlugins(e.target.files[0].path);
           }
         }}
       />

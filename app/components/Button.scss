@@ -1,0 +1,19 @@
+.button {
+  border: none;
+  border-radius: 2px;
+  background-color: rgba(black, 0.1);
+  font: inherit;
+  padding: 5px 10px;
+  outline: none;
+
+  &:not(:disabled) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(black, 0.2);
+    }
+    &:active {
+      background-color: rgba(black, 0.3);
+    }
+  }
+}
