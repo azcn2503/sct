@@ -34,11 +34,8 @@
 }
 
 .resultView {
-  display: flex;
   overflow-x: hidden;
   overflow-y: auto;
-  flex-direction: column-reverse;
   flex-grow: 1;
-  justify-content: flex-end;
   background-color: #fff;
 }
