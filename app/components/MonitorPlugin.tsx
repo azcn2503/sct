@@ -5,6 +5,10 @@ import { setZoneName } from '../actions/plugins';
 
 const scanReverseIds = [];
 
+/**
+ * MonitorPlugin will establish a reverse file stream on the log file.
+ * There will be one MonitorPlugin component per enabled plugin.
+ */
 export default function MonitorPlugin(props) {
   const dispatch = useDispatch();
   const isScanning = scanReverseIds.includes(props.plugin.manifest.id);

@@ -18,6 +18,12 @@ type MonitorProps = {
 /**
  * Monitor component does not render anything visible on screen, but uses
  * React lifecycle hooks to manage file log watching when things change in the app.
+ * It will set up a single file stream watcher (tail) and pass every line received
+ * through every enabled plugin.
+ * As such, this should be considered the "main" monitor and is crucial for the
+ * pseudo-realtime data visualisation.
+ * Plugins may also establish their own monitors as part of MonitorPlugin, rendered
+ * by this component.
  */
 function Monitor({ debug }: MonitorProps) {
   const dispatch = useDispatch();
