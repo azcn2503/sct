@@ -12,7 +12,8 @@ type PluginsState = {
 
 export const defaultState: PluginsState = {
   byId: {},
-  enabledIds: []
+  enabledIds: [],
+  scanReverseIds: []
 };
 
 export default function reducer(state = defaultState, action) {
@@ -28,16 +29,25 @@ export default function reducer(state = defaultState, action) {
             path,
             script,
             settingsSchema,
-            settings
+            settings,
+            scanReverse: false
           }
         }
       };
     }
 
     case actions.ENABLE_PLUGIN: {
+      const { id, compiled } = action;
       return {
         ...state,
-        enabledIds: uniq([...state.enabledIds, action.id])
+        byId: {
+          ...state.byId,
+          [id]: {
+            ...state.byId[id],
+            compiled
+          }
+        },
+        enabledIds: uniq([...state.enabledIds, id])
       };
     }
 

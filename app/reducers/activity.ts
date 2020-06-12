@@ -2,7 +2,8 @@ import * as actions from '../actions/activity';
 
 export const defaultState = {
   selectedEncounterId: null,
-  encounters: []
+  encounters: [],
+  zoneName: null
 };
 
 export default function reducer(state = defaultState, action: any) {

@@ -14,9 +14,9 @@ type PluginsProps = {
   enabledPlugins: Plugin[];
   plugins: Plugin[];
   addPlugin(plugin: Plugin): void;
-  enablePlugin({ id: string }: any): void;
-  disablePlugin({ id: string }: any): void;
-  removePlugin({ id: string }: any): void;
+  enablePlugin(id: string): void;
+  disablePlugin(id: string): void;
+  removePlugin(id: string): void;
   logFilePath: string;
   setPluginSettings(settings: any): void;
 };
@@ -61,14 +61,14 @@ function Plugins(props: PluginsProps) {
 
   function onClickTogglePlugin(e: React.MouseEvent, plugin: Plugin) {
     if (isPluginEnabled(plugin)) {
-      props.disablePlugin({ id: plugin.manifest.id });
+      props.disablePlugin(plugin.manifest.id);
     } else {
-      props.enablePlugin({ id: plugin.manifest.id });
+      props.enablePlugin(plugin.manifest.id);
     }
   }
 
   function onClickRemovePlugin(e: React.MouseEvent, plugin: Plugin) {
-    props.removePlugin({ id: plugin.manifest.id });
+    props.removePlugin(plugin.manifest.id);
   }
 
   const activePlugin = props.plugins.find(

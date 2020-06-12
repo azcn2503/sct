@@ -4,11 +4,12 @@ import { Tail } from 'tail';
 import { throttle } from 'lodash';
 
 import * as logActions from '../actions/log';
-import { compilePlugin, getCompiledPlugin } from '../utils/plugins';
 import * as activityActions from '../actions/activity';
 import * as statusActions from '../actions/status';
+import * as pluginsActions from '../actions/plugins';
 import { Plugin } from '../types';
 import { getEnabledPlugins } from '../reducers/plugins';
+import MonitorPlugin from './MonitorPlugin';
 
 type MonitorProps = {
   debug?: boolean;
@@ -25,6 +26,9 @@ function Monitor({ debug }: MonitorProps) {
 
   // Path to the log file in state
   const logFilePath = useSelector(state => state.settings.logFilePath);
+
+  // The current zone name
+  const zoneName = useSelector(state => state.activity.zoneName);
 
   // Enabled plugins, important to memoise since getEnabledPlugins always returns a new value
   const enabledPlugins = useSelector(state =>
@@ -43,34 +47,38 @@ function Monitor({ debug }: MonitorProps) {
   // Ref to the tail file monitor
   const tail = useRef(null);
 
-  const onLine = (line: string): void => {
-    if (!tail.current) return;
-    if (!enabledPlugins.length) return;
-    const pos = tail.current.queue[0];
+  const onLine = (line: string, reverse): void => {
+    if (reverse) {
+      // scan in reverse
+    } else {
+      if (!tail.current) return;
+      if (!enabledPlugins.length) return;
+      const pos = tail.current.queue[0];
 
-    // Process through plugins
-    enabledPlugins.forEach(plugin => {
-      const compiledPlugin = getCompiledPlugin(plugin.manifest.id);
-      if (!compiledPlugin) return;
-      if (debug) {
-        console.group(`execute plugin`, plugin.manifest.id);
-      }
-      setStatusMessage(
-        `${plugin.manifest.id} processing ${pos.start}-${pos.end}`
-      );
-      compiledPlugin({
-        line,
-        logFilePath,
-        setStatusMessage,
-        plugin,
-        pos,
-        registerDamage,
-        endEncounter
+      // Process through plugins
+      enabledPlugins.forEach(plugin => {
+        const { compiled } = plugin;
+        if (!compiled.plugin) return;
+        if (debug) {
+          console.group(`execute plugin`, plugin.manifest.id);
+        }
+        setStatusMessage(
+          `${plugin.manifest.id} processing ${pos.start}-${pos.end}`
+        );
+        compiled.plugin({
+          line,
+          logFilePath,
+          setStatusMessage,
+          plugin,
+          pos,
+          registerDamage,
+          endEncounter
+        });
+        if (debug) {
+          console.groupEnd();
+        }
       });
-      if (debug) {
-        console.groupEnd();
-      }
-    });
+    }
   };
 
   /**
@@ -82,7 +90,7 @@ function Monitor({ debug }: MonitorProps) {
     // Set up a new tail
     if (logFilePath) {
       tail.current = new Tail(logFilePath);
-      tail.current.on('line', onLine);
+      tail.current.on('line', line => onLine(line, false));
       setStatusMessage(`Monitoring log file for changes`);
     }
 
@@ -92,19 +100,22 @@ function Monitor({ debug }: MonitorProps) {
       tail.current.unwatch();
       tail.current = null;
     };
-  }, [logFilePath, enabledPlugins]);
+  }, [logFilePath, enabledPlugins, zoneName]);
 
   // Compile enabled plugins on first mount
   useEffect(() => {
     enabledPlugins.forEach((plugin: Plugin) =>
-      compilePlugin({
-        id: plugin.manifest.id,
-        script: plugin.script
-      })
+      dispatch(pluginsActions.enablePlugin(plugin.manifest.id))
     );
   }, []);
 
-  return null;
+  return enabledPlugins.map(plugin => (
+    <MonitorPlugin
+      key={plugin.manifest.id}
+      plugin={plugin}
+      logFilePath={logFilePath}
+    />
+  ));
 }
 
 export default Monitor;

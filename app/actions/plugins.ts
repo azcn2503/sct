@@ -24,25 +24,26 @@ export function addPlugin({
   };
 }
 
-export function enablePlugin({ id }) {
+export function enablePlugin(id) {
   return function enablePluginThunk(dispatch, getState) {
     const { script } = getState().plugins.byId[id];
-    utils.compilePlugin({ id, script });
+    const compiled = utils.compilePlugin(script);
     return dispatch({
       type: ENABLE_PLUGIN,
-      id
+      id,
+      compiled
     });
   };
 }
 
-export function disablePlugin({ id }) {
+export function disablePlugin(id) {
   return {
     type: DISABLE_PLUGIN,
     id
   };
 }
 
-export function removePlugin({ id }) {
+export function removePlugin(id) {
   return {
     type: REMOVE_PLUGIN,
     id
@@ -54,5 +55,20 @@ export function setPluginSettings({ id, settings }) {
     type: SET_PLUGIN_SETTINGS,
     id,
     settings
+  };
+}
+
+export function setZoneName({ id, zoneName }) {
+  return (dispatch, getState) => {
+    const { settings } = getState().plugins.byId[id];
+    return dispatch(
+      setPluginSettings({
+        id,
+        settings: {
+          ...settings,
+          zoneName
+        }
+      })
+    );
   };
 }

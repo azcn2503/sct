@@ -32,7 +32,7 @@ export default function PluginDetails(props: any) {
         <>
           <h3>Plugin settings</h3>
           <Form
-            config={props.plugin.settingsSchema}
+            config={props.plugin.settingsSchema.filter(f => !f.hidden)}
             values={props.plugin.settings}
             onChange={settings =>
               props.setPluginSettings({

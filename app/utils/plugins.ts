@@ -2,8 +2,6 @@ import { noop, get } from 'lodash';
 
 import { Plugin, PluginContext } from '../types';
 
-const compiledPlugins = {};
-
 function generateDefaultSettings(settingsSchema, context: PluginContext) {
   const contextKeys = Object.keys(context);
   const settings = {};
@@ -28,7 +26,7 @@ function generateDefaultSettings(settingsSchema, context: PluginContext) {
 export function compilePluginMetadata(
   script: string,
   context: PluginContext
-): Pick<Plugin, 'manifest' | 'settings' | 'settingsSchema'> {
+): Partial<Plugin> {
   try {
     const { manifest = noop, settingsSchema = noop } = eval(script) || {};
     const compiledSettingsSchema = settingsSchema(context);
@@ -44,23 +42,12 @@ export function compilePluginMetadata(
   }
 }
 
-export function compilePlugin({
-  id,
-  script
-}: {
-  id: string;
-  script: string;
-}): Function {
+export function compilePlugin(script: string) {
   try {
-    const { plugin } = eval(script) || {};
-    compiledPlugins[id] = plugin;
-    return plugin;
+    const { plugin, scanReverse } = eval(script) || {};
+    return { plugin, scanReverse };
   } catch (ex) {
     console.error('Plugin compile failed', ex);
     throw ex;
   }
-}
-
-export function getCompiledPlugin(id) {
-  return compiledPlugins[id];
 }

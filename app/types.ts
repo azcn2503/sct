@@ -4,6 +4,7 @@ export type Plugin = {
   path: string;
   settingsSchema?: PluginSettingsSchemaField[];
   settings?: PluginSettings;
+  scanReverse?(context: PluginContext): void;
 };
 
 export type PluginContext = {
