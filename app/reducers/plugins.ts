@@ -12,8 +12,7 @@ type PluginsState = {
 
 export const defaultState: PluginsState = {
   byId: {},
-  enabledIds: [],
-  scanReverseIds: []
+  enabledIds: []
 };
 
 export default function reducer(state = defaultState, action) {
@@ -29,8 +28,7 @@ export default function reducer(state = defaultState, action) {
             path,
             script,
             settingsSchema,
-            settings,
-            scanReverse: false
+            settings
           }
         }
       };

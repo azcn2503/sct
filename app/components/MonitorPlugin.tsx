@@ -25,15 +25,9 @@ export default function MonitorPlugin(props) {
 
   // Scan the log file in reverse for the zone name using scanReverse from this plugin
   useEffect(() => {
-    if (
-      props.plugin.compiled &&
-      props.plugin.compiled.scanReverse &&
-      props.logFilePath &&
-      !props.plugin.settings.zoneName &&
-      !isScanning
-    ) {
+    if (props.plugin.compiled.scanReverse && props.logFilePath && !isScanning) {
       startReverseScan();
     }
-  }, [props.plugin.compiled, props.plugin.scanReverse, props.logFilePath]);
+  }, [props.plugin.compiled.scanReverse, props.logFilePath]);
   return null;
 }
