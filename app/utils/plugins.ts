@@ -70,6 +70,7 @@ export function compilePlugin(script: string) {
 export function scanReverse(id, context) {
   streams[id] = fsR(context.logFilePath);
   streams[id].on('data', line => {
+    if (!streams[id]) return;
     context.compiled.scanReverse({
       ...context,
       line
