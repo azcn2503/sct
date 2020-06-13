@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tail } from 'tail';
-import { clone } from 'lodash';
 
-import * as logActions from '../actions/log';
 import { getEnabledPlugins } from '../reducers/plugins';
 import MonitorPlugin from './MonitorPlugin';
 
@@ -28,33 +26,26 @@ function Monitor(props: any) {
     ])
   );
 
-  // Ref to the tail file monitor
-  const tail = useRef(null);
-
-  function onLine(line: string): void {
-    if (!tail.current) return;
-    const pos = clone(tail.current.queue[0]);
-    dispatch(logActions.setLastLogLine({ line, pos }));
-  }
+  const [tail, setTail] = useState(null);
 
   function startTail() {
-    console.debug('Starting log monitor');
-    tail.current = new Tail(logFilePath);
-    tail.current.on('line', onLine);
+    if (!tail) {
+      console.debug('Starting log monitor');
+      setTail(new Tail(logFilePath));
+    }
   }
 
   function stopTail() {
-    if (tail.current) {
+    if (tail) {
       console.debug('Stopping log monitor');
-      tail.current.off('line', onLine);
-      tail.current.unwatch();
-      tail.current = null;
+      tail.unwatch();
+      setTail(null);
     }
   }
 
   /**
-   * Set up a tail on the log file.
-   * We want to re-run this when the log file or the enabled plugins change.
+   * Start logging if we have enabled plugins and a log file.
+   * Stop logging if we do not have any enabled plugins, or a log file.
    */
   useEffect(() => {
     if (!enabledPlugins.length || !logFilePath) {
@@ -63,11 +54,6 @@ function Monitor(props: any) {
     }
 
     startTail();
-
-    // eslint-disable-next-line consistent-return
-    return () => {
-      stopTail();
-    };
   }, [logFilePath, enabledPlugins]);
 
   return enabledPlugins.map(plugin => (
@@ -76,6 +62,7 @@ function Monitor(props: any) {
       plugin={plugin}
       logFilePath={logFilePath}
       dispatch={dispatch}
+      tail={tail}
     />
   ));
 }
