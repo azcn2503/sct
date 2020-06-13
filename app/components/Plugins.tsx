@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import fs from 'fs';
 import path from 'path';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
+import { debounce } from 'lodash';
 
 import Tabs from './Tabs';
 import Tab from './Tab';
@@ -31,6 +32,9 @@ function Plugins(props: any) {
     useMemo(() => getEnabledPlugins(state.plugins), [state.plugins.enabledIds])
   );
   const logFilePath: string = useSelector(state => state.settings.logFilePath);
+  const debouncedSetPluginSettings = useRef(
+    debounce(args => dispatch(setPluginSettings(args)), 500)
+  );
 
   useEffect(() => {
     if (plugins.length && !activePluginTab) {
@@ -123,7 +127,7 @@ function Plugins(props: any) {
               isEnabled={isPluginEnabled(activePlugin)}
               onClickTogglePlugin={e => onClickTogglePlugin(e, activePlugin)}
               onClickRemovePlugin={e => onClickRemovePlugin(e, activePlugin)}
-              setPluginSettings={args => dispatch(setPluginSettings(args))}
+              setPluginSettings={debouncedSetPluginSettings.current}
             />
           )}
         </>
