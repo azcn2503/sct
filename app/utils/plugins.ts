@@ -87,16 +87,25 @@ export function stopScanReverse(id) {
 export function getPluginContext(baseContext, dispatch) {
   const registerDamage = args => dispatch(activityActions.registerDamage(args));
   const endEncounter = args => dispatch(activityActions.endEncounter(args));
-  const setZoneName = args => dispatch(pluginsActions.setZoneName(args));
+  const setZoneName = zoneName =>
+    dispatch(
+      pluginsActions.setZoneName({
+        id: baseContext.plugin.manifest.id,
+        zoneName
+      })
+    );
   const setStatusMessage = throttle(
     args => dispatch(statusActions.setStatusMessage(args)),
     500
   );
+  const setPluginReady = () =>
+    dispatch(pluginsActions.setPluginReady(baseContext.plugin.manifest.id));
   return {
     ...baseContext,
     registerDamage,
     endEncounter,
     setZoneName,
-    setStatusMessage
+    setStatusMessage,
+    setPluginReady
   };
 }

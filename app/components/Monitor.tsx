@@ -45,10 +45,6 @@ function Monitor({ debug }: MonitorProps) {
 
   const compiledPlugins = useSelector(state => state.compiled.byId);
 
-  const pluginContext = getPluginContext({ logFilePath }, dispatch);
-
-  // Throttled setStatusMessage so we don't bombard the UI with re-renders
-
   // Ref to the tail file monitor
   const tail = useRef(null);
 
@@ -67,16 +63,14 @@ function Monitor({ debug }: MonitorProps) {
         if (debug) {
           console.group(`execute plugin`, plugin.manifest.id);
         }
+        const pluginContext = getPluginContext(
+          { logFilePath, plugin, line, pos },
+          dispatch
+        );
         pluginContext.setStatusMessage(
           `${plugin.manifest.id} processing ${pos.start}-${pos.end}`
         );
-        compiled.plugin({
-          ...pluginContext,
-          line,
-          logFilePath,
-          plugin,
-          pos
-        });
+        compiled.plugin(pluginContext);
         if (debug) {
           console.groupEnd();
         }
@@ -94,7 +88,6 @@ function Monitor({ debug }: MonitorProps) {
     if (logFilePath) {
       tail.current = new Tail(logFilePath);
       tail.current.on('line', line => onLine(line, false));
-      pluginContext.setStatusMessage(`Monitoring log file for changes`);
     }
 
     // eslint-disable-next-line consistent-return
@@ -109,9 +102,10 @@ function Monitor({ debug }: MonitorProps) {
 
   // Compile enabled plugins on first mount
   useEffect(() => {
-    enabledPlugins.forEach((plugin: Plugin) =>
-      dispatch(pluginsActions.compilePlugin(plugin.manifest.id, pluginContext))
-    );
+    enabledPlugins.forEach((plugin: Plugin) => {
+      const pluginContext = getPluginContext({ logFilePath, plugin }, dispatch);
+      dispatch(pluginsActions.compilePlugin(plugin.manifest.id, pluginContext));
+    });
   }, []);
 
   return enabledPlugins.map(plugin => (
