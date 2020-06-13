@@ -85,7 +85,8 @@ export function stopScanReverse(id) {
 }
 
 export function getPluginContext(baseContext, dispatch) {
-  const registerDamage = args => dispatch(activityActions.registerDamage(args));
+  const registerDamage = args =>
+    dispatch(activityActions.registerDamage(args, baseContext.plugin));
   const endEncounter = args => dispatch(activityActions.endEncounter(args));
   const setZoneName = zoneName =>
     dispatch(

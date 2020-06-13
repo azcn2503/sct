@@ -9,27 +9,27 @@ export const defaultState = {
 export default function reducer(state = defaultState, action: any) {
   switch (action.type) {
     case actions.REGISTER_DAMAGE: {
-      const { payload, id, isNew } = action;
+      const { payload, encounterId, isNew } = action;
       if (isNew) {
         return {
           ...state,
           encounters: [
             ...state.encounters,
             {
-              id,
+              id: encounterId,
               startTime: Date.now(),
               targetName: payload.targetName,
               activity: [payload],
               actorsByName: {}
             }
           ],
-          selectedEncounterId: id
+          selectedEncounterId: encounterId
         };
       }
       return {
         ...state,
         encounters: state.encounters.map((encounter: any) => {
-          if (encounter.id === id) {
+          if (encounter.id === encounterId) {
             return {
               ...encounter,
               activity: [...encounter.activity, payload]

@@ -1,3 +1,5 @@
+import db from '../db';
+
 export const REGISTER_DAMAGE = 'REGISTER_DAMAGE';
 export const END_ENCOUNTER = 'END_ENCOUNTER';
 export const SELECT_ENCOUNTER = 'SELECT_ENCOUNTER';
@@ -18,22 +20,32 @@ export function endEncounter() {
   };
 }
 
-export function registerDamage(payload) {
-  return function registerDamageThunk(dispatch) {
+export function registerDamage(payload, plugin) {
+  return dispatch => {
     // Clear the existing encounter timeout if it is set
     clearTimeout(encounterTimeout);
 
     // End the encounter after 4 seconds
     encounterTimeout = setTimeout(() => {
       dispatch(endEncounter());
-    }, 4000);
+    }, plugin.settings.encounterTimeout || 4000);
 
-    // Register the damage, creating new encounter if necessary
+    const encounterEnrichedPayload = {
+      ...payload,
+      encounterId
+    };
+
+    db.post(encounterEnrichedPayload, (err, response) => {
+      // TODO: check this worked
+    });
+
+    // Register the damage, creating new encounter if necessary.
+    // TODO: once the db stuff is in, remove this, because updating global state on every damage trigger is render overkill.
     dispatch({
       type: REGISTER_DAMAGE,
       isNew: !encounterActive,
-      id: encounterId,
-      payload
+      encounterId,
+      payload: encounterEnrichedPayload
     });
     encounterActive = true;
   };
