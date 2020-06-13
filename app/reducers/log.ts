@@ -1,15 +1,19 @@
 import * as actions from '../actions/log';
 
 export const defaultState = {
-  lastLogLine: null
+  line: null,
+  pos: {}
 };
 
 export default function reducer(state = defaultState, action) {
   switch (action.type) {
-    case actions.SET_LAST_LOG_LINE:
+    case actions.SET_LAST_LOG_LINE: {
+      const { line, pos } = action;
       return {
-        lastLogLine: action.line
+        line,
+        pos
       };
+    }
 
     default:
       return state;
