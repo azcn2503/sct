@@ -13,7 +13,8 @@ module.exports = {
     'react/destructuring-assignment': 'off', // Redux actions often have the same name as props, requiring prop name juggling if this rule is active,
     'import/no-named-as-default': 'off',
     'react/jsx-curly-newline': 'off',
-    'react/no-array-index-key': 'off'
+    'react/no-array-index-key': 'off',
+    'import/no-cycle': 'off'
   },
   settings: {
     'import/resolver': {

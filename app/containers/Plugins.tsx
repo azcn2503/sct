@@ -8,7 +8,9 @@ import {
   enablePlugin,
   disablePlugin,
   removePlugin,
-  setPluginSettings
+  setPluginSettings,
+  compilePlugin,
+  setPluginReady
 } from '../actions/plugins';
 import { getEnabledPlugins } from '../reducers/plugins';
 
@@ -30,6 +32,8 @@ function mapDispatchToProps(dispatch) {
     enablePlugin: args => dispatch(enablePlugin(args)),
     disablePlugin: args => dispatch(disablePlugin(args)),
     removePlugin: args => dispatch(removePlugin(args)),
+    compilePlugin: (id, context) => dispatch(compilePlugin(id, context)),
+    setPluginReady: args => dispatch(setPluginReady(args)),
     setPluginSettings: debouncedSetPluginSettings
   };
 }

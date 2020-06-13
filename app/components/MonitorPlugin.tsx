@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import fsR from 'fs-reverse';
 import { setZoneName } from '../actions/plugins';
 
@@ -11,27 +11,29 @@ const scanReverseIds = [];
  */
 export default function MonitorPlugin(props) {
   const dispatch = useDispatch();
-  const isScanning = scanReverseIds.includes(props.plugin.manifest.id);
+  const plugin = useSelector(state => state.plugins.byId[props.pluginId]);
+  const compiled = useSelector(state => state.compiled.byId[props.pluginId]);
+  const isScanning = scanReverseIds.includes(props.pluginId);
 
-  function startReverseScan() {
-    scanReverseIds.push(props.plugin.manifest.id);
-    const stream = fsR(props.logFilePath);
-    stream.on('data', line => {
-      props.plugin.compiled.scanReverse({
-        line,
-        setZoneName: zoneName => {
-          stream.destroy();
-          dispatch(setZoneName({ id: props.plugin.manifest.id, zoneName }));
-        }
-      });
-    });
-  }
+  // function startReverseScan() {
+  //   scanReverseIds.push(plugin.manifest.id);
+  //   const stream = fsR(props.logFilePath);
+  //   stream.on('data', line => {
+  //     compiled.scanReverse({
+  //       line,
+  //       setZoneName: zoneName => {
+  //         stream.destroy();
+  //         dispatch(setZoneName({ id: plugin.manifest.id, zoneName }));
+  //       }
+  //     });
+  //   });
+  // }
 
   // Scan the log file in reverse for the zone name using scanReverse from this plugin
-  useEffect(() => {
-    if (props.plugin.compiled.scanReverse && props.logFilePath && !isScanning) {
-      startReverseScan();
-    }
-  }, [props.plugin.compiled.scanReverse, props.logFilePath]);
+  // useEffect(() => {
+  //   if (props.plugin.compiled.scanReverse && props.logFilePath && !isScanning) {
+  //     startReverseScan();
+  //   }
+  // }, [props.plugin.compiled.scanReverse, props.logFilePath]);
   return null;
 }

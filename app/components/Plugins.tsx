@@ -63,6 +63,10 @@ function Plugins(props: PluginsProps) {
     if (isPluginEnabled(plugin)) {
       props.disablePlugin(plugin.manifest.id);
     } else {
+      props.compilePlugin(plugin.manifest.id, {
+        setPluginReady: props.setPluginReady,
+        logFilePath: props.logFilePath
+      });
       props.enablePlugin(plugin.manifest.id);
     }
   }

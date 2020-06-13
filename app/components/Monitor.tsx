@@ -10,6 +10,7 @@ import * as pluginsActions from '../actions/plugins';
 import { Plugin } from '../types';
 import { getEnabledPlugins } from '../reducers/plugins';
 import MonitorPlugin from './MonitorPlugin';
+import { getPluginContext } from '../utils/plugins';
 
 type MonitorProps = {
   debug?: boolean;
@@ -27,8 +28,6 @@ type MonitorProps = {
  */
 function Monitor({ debug }: MonitorProps) {
   const dispatch = useDispatch();
-  const registerDamage = args => dispatch(activityActions.registerDamage(args));
-  const endEncounter = args => dispatch(activityActions.endEncounter(args));
 
   // Path to the log file in state
   const logFilePath = useSelector(state => state.settings.logFilePath);
@@ -44,11 +43,11 @@ function Monitor({ debug }: MonitorProps) {
     ])
   );
 
+  const compiledPlugins = useSelector(state => state.compiled.byId);
+
+  const pluginContext = getPluginContext({ logFilePath }, dispatch);
+
   // Throttled setStatusMessage so we don't bombard the UI with re-renders
-  const setStatusMessage = throttle(
-    args => dispatch(statusActions.setStatusMessage(args)),
-    500
-  );
 
   // Ref to the tail file monitor
   const tail = useRef(null);
@@ -63,22 +62,20 @@ function Monitor({ debug }: MonitorProps) {
 
       // Process through plugins
       enabledPlugins.forEach(plugin => {
-        const { compiled } = plugin;
-        if (!compiled.plugin) return;
+        const compiled = compiledPlugins[plugin.manifest.id];
+        if (!compiled || !compiled.plugin) return;
         if (debug) {
           console.group(`execute plugin`, plugin.manifest.id);
         }
-        setStatusMessage(
+        pluginContext.setStatusMessage(
           `${plugin.manifest.id} processing ${pos.start}-${pos.end}`
         );
         compiled.plugin({
+          ...pluginContext,
           line,
           logFilePath,
-          setStatusMessage,
           plugin,
-          pos,
-          registerDamage,
-          endEncounter
+          pos
         });
         if (debug) {
           console.groupEnd();
@@ -97,28 +94,30 @@ function Monitor({ debug }: MonitorProps) {
     if (logFilePath) {
       tail.current = new Tail(logFilePath);
       tail.current.on('line', line => onLine(line, false));
-      setStatusMessage(`Monitoring log file for changes`);
+      pluginContext.setStatusMessage(`Monitoring log file for changes`);
     }
 
     // eslint-disable-next-line consistent-return
     return () => {
-      tail.current.off('line', onLine);
-      tail.current.unwatch();
-      tail.current = null;
+      if (tail.current) {
+        tail.current.off('line', onLine);
+        tail.current.unwatch();
+        tail.current = null;
+      }
     };
   }, [logFilePath, enabledPlugins, zoneName]);
 
   // Compile enabled plugins on first mount
   useEffect(() => {
     enabledPlugins.forEach((plugin: Plugin) =>
-      dispatch(pluginsActions.enablePlugin(plugin.manifest.id))
+      dispatch(pluginsActions.compilePlugin(plugin.manifest.id, pluginContext))
     );
   }, []);
 
   return enabledPlugins.map(plugin => (
     <MonitorPlugin
       key={plugin.manifest.id}
-      plugin={plugin}
+      pluginId={plugin.manifest.id}
       logFilePath={logFilePath}
     />
   ));

@@ -35,14 +35,13 @@ export default function reducer(state = defaultState, action) {
     }
 
     case actions.ENABLE_PLUGIN: {
-      const { id, compiled } = action;
+      const { id } = action;
       return {
         ...state,
         byId: {
           ...state.byId,
           [id]: {
-            ...state.byId[id],
-            compiled
+            ...state.byId[id]
           }
         },
         enabledIds: uniq([...state.enabledIds, id])
