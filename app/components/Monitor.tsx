@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Tail } from 'tail';
 
@@ -17,6 +17,7 @@ function Monitor(props: any) {
 
   // Path to the log file in state
   const logFilePath = useSelector(state => state.settings.logFilePath);
+  const prevLogFilePath = useRef(logFilePath);
 
   // Enabled plugins, important to memoise since getEnabledPlugins always returns a new value
   const enabledPlugins = useSelector(state =>
@@ -29,16 +30,15 @@ function Monitor(props: any) {
   const [tail, setTail] = useState(null);
 
   function startTail() {
-    if (!tail) {
-      console.debug('Starting log monitor');
-      setTail(new Tail(logFilePath));
-    }
+    console.debug('Starting log monitor');
+    setTail(new Tail(logFilePath));
+    prevLogFilePath.current = logFilePath;
   }
 
   function stopTail() {
     if (tail) {
       console.debug('Stopping log monitor');
-      tail.unwatch();
+      const unwatch = tail.unwatch();
       setTail(null);
     }
   }
@@ -48,13 +48,17 @@ function Monitor(props: any) {
    * Stop logging if we do not have any enabled plugins, or a log file.
    */
   useEffect(() => {
-    if (!enabledPlugins.length || !logFilePath) {
+    const logFilePathChanged = logFilePath !== prevLogFilePath.current;
+    if (
+      tail &&
+      (!enabledPlugins.length || !logFilePath || logFilePathChanged)
+    ) {
       stopTail();
-      return;
     }
-
-    startTail();
-  }, [logFilePath, enabledPlugins]);
+    if (!tail && enabledPlugins.length && logFilePath) {
+      startTail();
+    }
+  }, [logFilePath, enabledPlugins, tail]);
 
   return enabledPlugins.map(plugin => (
     <MonitorPlugin
