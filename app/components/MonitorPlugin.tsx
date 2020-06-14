@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { clone } from 'lodash';
+import { clone, throttle } from 'lodash';
 
+import { setStatusMessage } from '../actions/status';
 import { compilePlugin } from '../actions/plugins';
 import { getPluginContext } from '../utils/plugins';
 
@@ -10,7 +11,9 @@ import { getPluginContext } from '../utils/plugins';
  * There will be one MonitorPlugin component per enabled plugin.
  */
 export default function MonitorPlugin({ logFilePath, plugin, dispatch, tail }) {
-  // const { line, pos } = useSelector(state => state.log);
+  const setStatusMessageThrottled = useRef(
+    throttle(args => dispatch(setStatusMessage(args)), 1000)
+  );
   const compiled = useSelector(
     state => state.compiled.byId[plugin.manifest.id]
   );
@@ -22,7 +25,7 @@ export default function MonitorPlugin({ logFilePath, plugin, dispatch, tail }) {
       { logFilePath, plugin, line, pos },
       dispatch
     );
-    pluginContext.setStatusMessage(
+    setStatusMessageThrottled.current(
       `${plugin.manifest.id} processing ${pos.start}-${pos.end}`
     );
     compiled.plugin(pluginContext);

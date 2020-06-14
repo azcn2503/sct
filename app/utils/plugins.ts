@@ -1,3 +1,4 @@
+import React, { useRef } from 'react';
 import fsR from 'fs-reverse';
 import { noop, throttle } from 'lodash';
 
@@ -96,10 +97,8 @@ export function getPluginContext(baseContext, dispatch) {
         zoneName
       })
     );
-  const setStatusMessage = throttle(
-    args => dispatch(statusActions.setStatusMessage(args)),
-    500
-  );
+  const setStatusMessage = args =>
+    dispatch(statusActions.setStatusMessage(args));
   const setPluginReady = () =>
     dispatch(pluginsActions.setPluginReady(baseContext.plugin.manifest.id));
   return {
