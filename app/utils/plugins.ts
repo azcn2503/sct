@@ -10,7 +10,7 @@ import { Plugin, PluginContext } from '../types';
 
 const streams = {};
 
-function generateDefaultSettings(settingsSchema, context: PluginContext) {
+function generateDefaultSettings(settingsSchema = [], context: PluginContext) {
   const contextKeys = Object.keys(context);
   const settings = {};
   if (context.plugin) {

@@ -1,9 +1,22 @@
 import PouchDB from 'pouchdb';
+import PouchDBFind from 'pouchdb-find';
 
-const db = new PouchDB('SCTActivity');
+PouchDB.plugin(PouchDBFind);
 
-db.destroy((err, info) => {
-  console.debug('Cleared database', { err, info });
-});
+let db = null;
 
-export default db;
+export async function init() {
+  db = new PouchDB('activity');
+  await db.destroy();
+  db = new PouchDB('activity'); // yep, again.
+  await db.createIndex({
+    index: {
+      fields: ['encounterId']
+    }
+  });
+  return db;
+}
+
+export function getDatabase() {
+  return db;
+}

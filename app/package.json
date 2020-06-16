@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "pouchdb": "^7.2.1"
+    "pouchdb": "^7.2.1",
+    "pouchdb-find": "^7.2.1"
   }
 }

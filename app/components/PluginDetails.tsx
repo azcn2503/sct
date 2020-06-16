@@ -1,9 +1,44 @@
-import React from 'react';
+import React, { useRef, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+import { debounce } from 'lodash';
 
+import { setPluginSettings } from '../actions/plugins';
 import Button from './Button';
 import Form from './Form';
 
 import styles from './PluginDetails.scss';
+
+function PluginSettings({ plugin }: any) {
+  const dispatch = useDispatch();
+  const debouncedSetPluginSettings = useRef(
+    debounce(args => dispatch(setPluginSettings(args)), 500)
+  );
+  const filteredSettingsSchema = useMemo(
+    () => plugin.settingsSchema.filter(f => !f.hidden),
+    [plugin.settingsSchema]
+  );
+  return (
+    <>
+      <h3>Plugin settings</h3>
+      {filteredSettingsSchema.length > 0 ? (
+        <Form
+          config={filteredSettingsSchema}
+          values={plugin.settings}
+          onChange={settings =>
+            debouncedSetPluginSettings.current({
+              id: plugin.manifest.id,
+              settings
+            })
+          }
+        />
+      ) : (
+        <div className={styles.noSettings}>
+          This plugin does not provide any configurable settings.
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function PluginDetails(props: any) {
   const manifest = {
@@ -28,21 +63,7 @@ export default function PluginDetails(props: any) {
       <Button type="button" onClick={props.onClickRemovePlugin}>
         Remove
       </Button>
-      {props.plugin.settingsSchema.length > 0 && (
-        <>
-          <h3>Plugin settings</h3>
-          <Form
-            config={props.plugin.settingsSchema.filter(f => !f.hidden)}
-            values={props.plugin.settings}
-            onChange={settings =>
-              props.setPluginSettings({
-                id: props.plugin.manifest.id,
-                settings
-              })
-            }
-          />
-        </>
-      )}
+      <PluginSettings plugin={props.plugin} />
     </div>
   );
 }

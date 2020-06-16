@@ -18,7 +18,7 @@ export const defaultState: PluginsState = {
 export default function reducer(state = defaultState, action) {
   switch (action.type) {
     case actions.ADD_PLUGIN: {
-      const { manifest, path, script, settingsSchema, settings } = action;
+      const { manifest, path, script, settingsSchema = [], settings } = action;
       return {
         ...state,
         byId: {

@@ -1,25 +1,58 @@
-import React from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import moment from 'moment';
+
+import * as activityActions from '../actions/activity';
 import styles from './Activity.scss';
+import { DatabaseContext } from '../context/Database';
 
 export default function Activity(props: any) {
+  const db = useContext(DatabaseContext);
+  const dispatch = useDispatch();
+  const encounters = useSelector(state => state.activity.encounters);
+  const selectedEncounter = useSelector(state =>
+    useMemo(
+      () =>
+        state.activity.encounters.find(
+          encounter => encounter.id === state.activity.selectedEncounterId
+        ),
+      [state.activity.selectedEncounterId]
+    )
+  );
+  const selectEncounter = args =>
+    dispatch(activityActions.selectEncounter(args));
+  useEffect(() => {
+    if (selectedEncounter && db) {
+      db.find({
+        selector: {
+          encounterId: selectedEncounter.id
+        }
+      })
+        .then(results => {
+          console.log('~ results', results);
+          return results;
+        })
+        .catch(err => {
+          console.error('~ db error', err);
+        });
+    }
+  }, [selectedEncounter]);
   return (
     <div className={styles.container} data-tid="container">
       <div className={styles.encounterList}>
-        {props.encounters.map(encounter => (
+        {encounters.map(encounter => (
           <li
             key={encounter.id}
             className={classNames(styles.encounter, {
               [styles.isActive]:
-                props.selectedEncounter &&
-                encounter.id === props.selectedEncounter.id
+                selectedEncounter && encounter.id === selectedEncounter.id
             })}
           >
             <button
               type="button"
               onClick={() =>
-                props.selectEncounter({
+                selectEncounter({
                   id: encounter.id
                 })
               }
@@ -35,8 +68,8 @@ export default function Activity(props: any) {
         ))}
       </div>
       <div className={styles.resultView}>
-        {props.selectedEncounter &&
-          props.selectedEncounter.activity.map((activity, activityKey) => (
+        {selectedEncounter &&
+          selectedEncounter.activity.map((activity, activityKey) => (
             <div key={activityKey}>
               {Object.entries(activity).map(([key, value]) => (
                 <div key={key}>

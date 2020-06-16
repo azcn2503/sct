@@ -1,4 +1,4 @@
-import db from '../db';
+import { getDatabase } from '../db';
 
 export const REGISTER_DAMAGE = 'REGISTER_DAMAGE';
 export const END_ENCOUNTER = 'END_ENCOUNTER';
@@ -21,6 +21,7 @@ export function endEncounter() {
 }
 
 export function registerDamage(payload, plugin) {
+  const db = getDatabase();
   return dispatch => {
     // Clear the existing encounter timeout if it is set
     clearTimeout(encounterTimeout);

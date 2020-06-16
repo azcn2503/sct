@@ -32,9 +32,6 @@ function Plugins(props: any) {
     useMemo(() => getEnabledPlugins(state.plugins), [state.plugins.enabledIds])
   );
   const logFilePath: string = useSelector(state => state.settings.logFilePath);
-  const debouncedSetPluginSettings = useRef(
-    debounce(args => dispatch(setPluginSettings(args)), 500)
-  );
 
   useEffect(() => {
     if (plugins.length && !activePluginTab) {
@@ -127,7 +124,6 @@ function Plugins(props: any) {
               isEnabled={isPluginEnabled(activePlugin)}
               onClickTogglePlugin={e => onClickTogglePlugin(e, activePlugin)}
               onClickRemovePlugin={e => onClickRemovePlugin(e, activePlugin)}
-              setPluginSettings={debouncedSetPluginSettings.current}
             />
           )}
         </>
