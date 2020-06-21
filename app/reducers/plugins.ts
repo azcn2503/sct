@@ -8,11 +8,13 @@ type PluginsState = {
     [key: string]: any;
   };
   enabledIds: string[];
+  selectedPluginId: string | null;
 };
 
 export const defaultState: PluginsState = {
   byId: {},
-  enabledIds: []
+  enabledIds: [],
+  selectedPluginId: null
 };
 
 export default function reducer(state = defaultState, action) {
@@ -30,7 +32,8 @@ export default function reducer(state = defaultState, action) {
             settingsSchema,
             settings
           }
-        }
+        },
+        selectedPluginId: manifest.id
       };
     }
 
@@ -59,7 +62,16 @@ export default function reducer(state = defaultState, action) {
       return {
         ...state,
         byId: omit(state.byId, [action.id]),
-        enabledIds: state.enabledIds.filter(id => id !== action.id)
+        enabledIds: state.enabledIds.filter(id => id !== action.id),
+        selectedPluginId: (() => {
+          if (
+            action.id === state.selectedPluginId &&
+            Object.keys(state.byId).length > 1
+          ) {
+            return Object.keys(state.byId)[0];
+          }
+          return state.selectedPluginId;
+        })()
       };
     }
 
@@ -76,6 +88,12 @@ export default function reducer(state = defaultState, action) {
         }
       };
     }
+
+    case actions.SET_SELECTED_PLUGIN_ID:
+      return {
+        ...state,
+        selectedPluginId: action.id
+      };
 
     default:
       return state;

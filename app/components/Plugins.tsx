@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import fs from 'fs';
 import path from 'path';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
-import { debounce } from 'lodash';
 
 import Tabs from './Tabs';
 import Tab from './Tab';
@@ -11,20 +10,12 @@ import PluginDetails from './PluginDetails';
 import styles from './Plugins.scss';
 import { Plugin } from '../types';
 import { compilePluginMetadata } from '../utils/plugins';
-import {
-  addPlugin,
-  enablePlugin,
-  disablePlugin,
-  removePlugin,
-  setPluginSettings,
-  compilePlugin,
-  setPluginReady
-} from '../actions/plugins';
+import * as pluginActions from '../actions/plugins';
 import { getEnabledPlugins } from '../reducers/plugins';
 
 function Plugins(props: any) {
-  const [activePluginTab, setActivePluginTab] = useState<string | null>(null);
   const dispatch = useDispatch();
+  const selectedPluginId = useSelector(state => state.plugins.selectedPluginId);
   const plugins: Plugin[] = useSelector(state =>
     useMemo(() => Object.values(state.plugins.byId), [state.plugins.byId])
   );
@@ -34,8 +25,8 @@ function Plugins(props: any) {
   const logFilePath: string = useSelector(state => state.settings.logFilePath);
 
   useEffect(() => {
-    if (plugins.length && !activePluginTab) {
-      setActivePluginTab(plugins[0].manifest.id);
+    if (plugins.length && !selectedPluginId) {
+      dispatch(pluginActions.setSelectedPluginId(plugins[0].manifest.id));
     }
   }, [plugins]);
 
@@ -56,15 +47,17 @@ function Plugins(props: any) {
           logFilePath
         }
       );
-      dispatch(
-        addPlugin({
-          manifest,
-          settingsSchema,
-          settings,
-          path: folderPath,
-          script: pluginString
-        })
-      );
+      if (manifest) {
+        dispatch(
+          pluginActions.addPlugin({
+            manifest,
+            settingsSchema,
+            settings,
+            path: folderPath,
+            script: pluginString
+          })
+        );
+      }
     } catch (ex) {
       console.error('Error loading plugin', ex);
     }
@@ -72,23 +65,23 @@ function Plugins(props: any) {
 
   function onClickTogglePlugin(e: React.MouseEvent, plugin: Plugin) {
     if (isPluginEnabled(plugin)) {
-      dispatch(disablePlugin(plugin.manifest.id));
+      dispatch(pluginActions.disablePlugin(plugin.manifest.id));
     } else {
       dispatch(
-        compilePlugin(plugin.manifest.id, {
-          setPluginReady: args => dispatch(setPluginReady(args)),
+        pluginActions.compilePlugin(plugin.manifest.id, {
+          setPluginReady: args => dispatch(pluginActions.setPluginReady(args)),
           logFilePath
         })
       );
-      dispatch(enablePlugin(plugin.manifest.id));
+      dispatch(pluginActions.enablePlugin(plugin.manifest.id));
     }
   }
 
   function onClickRemovePlugin(e: React.MouseEvent, plugin: Plugin) {
-    dispatch(removePlugin(plugin.manifest.id));
+    dispatch(pluginActions.removePlugin(plugin.manifest.id));
   }
 
-  const activePlugin = plugins.find(p => p.manifest.id === activePluginTab);
+  const activePlugin = plugins.find(p => p.manifest.id === selectedPluginId);
 
   return (
     <div className={styles.plugins}>
@@ -100,8 +93,10 @@ function Plugins(props: any) {
       {plugins.length > 0 && (
         <>
           <Tabs
-            value={activePluginTab}
-            onChange={value => setActivePluginTab(value)}
+            value={selectedPluginId}
+            onChange={value =>
+              dispatch(pluginActions.setSelectedPluginId(value))
+            }
           >
             {plugins.map(plugin => {
               const isEnabled = isPluginEnabled(plugin);

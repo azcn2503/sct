@@ -8,6 +8,7 @@ export const DISABLE_PLUGIN = 'DISABLE_PLUGIN';
 export const REMOVE_PLUGIN = 'REMOVE_PLUGIN';
 export const SET_PLUGIN_SETTINGS = 'SET_PLUGIN_SETTINGS';
 export const SET_PLUGIN_READY = 'SET_PLUGIN_READY';
+export const SET_SELECTED_PLUGIN_ID = 'SET_SELECTED_PLUGIN_ID';
 
 export function setPluginSettings({ id, settings }) {
   return {
@@ -103,6 +104,13 @@ export function disablePlugin(id) {
 export function removePlugin(id) {
   return {
     type: REMOVE_PLUGIN,
+    id
+  };
+}
+
+export function setSelectedPluginId(id) {
+  return {
+    type: SET_SELECTED_PLUGIN_ID,
     id
   };
 }
