@@ -17,6 +17,9 @@ export default function MonitorPlugin({ logFilePath, plugin, dispatch, tail }) {
   const compiled = useSelector(
     state => state.compiled.byId[plugin.manifest.id]
   );
+  const isEnabled = useSelector(state =>
+    state.plugins.enabledIds.includes(plugin.manifest.id)
+  );
 
   function onLine(line) {
     if (!compiled) return;
@@ -43,6 +46,13 @@ export default function MonitorPlugin({ logFilePath, plugin, dispatch, tail }) {
     const pluginContext = getPluginContext({ logFilePath, plugin }, dispatch);
     dispatch(compilePlugin(plugin.manifest.id, pluginContext));
   }, []);
+
+  // Compile if log file changes and plugin is enabled
+  useEffect(() => {
+    if (!isEnabled || !logFilePath) return;
+    const pluginContext = getPluginContext({ logFilePath, plugin }, dispatch);
+    dispatch(compilePlugin(plugin.manifest.id, pluginContext));
+  }, [logFilePath]);
 
   return null;
 }

@@ -37,10 +37,12 @@ function Plugins(props: any) {
   async function onChangeFile(e: any) {
     const [file] = e.target.files || [];
     if (!file) return;
+
     const folderPath = path.dirname(file.path);
     try {
       const pluginString = fs.readFileSync(file.path, { encoding: 'utf8' });
       if (!pluginString) return;
+
       const { manifest, settingsSchema, settings } = compilePluginMetadata(
         pluginString,
         {

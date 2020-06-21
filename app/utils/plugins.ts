@@ -41,8 +41,7 @@ export function compilePluginMetadata(
   context: PluginContext
 ): Partial<Plugin> {
   try {
-    const { manifest = noop, settingsSchema = noop } =
-      eval(script.replace(/module\.exports/, 'module')) || {};
+    const { manifest = noop, settingsSchema = noop } = eval(script) || {};
     const compiledSettingsSchema = settingsSchema(context);
     const settings = generateDefaultSettings(compiledSettingsSchema, context);
     return {
@@ -69,22 +68,30 @@ export function compilePlugin(script: string) {
   }
 }
 
+export function stopScanReverse(id) {
+  if (streams[id]) {
+    console.debug('Stopping reverse scan');
+    streams[id].destroy();
+    delete streams[id];
+  }
+}
+
 export function scanReverse(id, context) {
+  if (!context.logFilePath) return;
+
+  console.debug('Starting reverse scan');
   streams[id] = fsR(context.logFilePath);
   streams[id].on('data', line => {
     if (!streams[id]) return;
+
     context.compiled.scanReverse({
       ...context,
       line
     });
   });
-}
-
-export function stopScanReverse(id) {
-  if (streams[id]) {
-    streams[id].destroy();
-    delete streams[id];
-  }
+  streams[id].on('end', () => {
+    stopScanReverse(id);
+  });
 }
 
 export function getPluginContext(baseContext, dispatch) {
