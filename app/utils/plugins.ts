@@ -41,7 +41,8 @@ export function compilePluginMetadata(
   context: PluginContext
 ): Partial<Plugin> {
   try {
-    const { manifest = noop, settingsSchema = noop } = eval(script) || {};
+    const { manifest = noop, settingsSchema = noop } =
+      eval(script.replace(/module\.exports/, 'module')) || {};
     const compiledSettingsSchema = settingsSchema(context);
     const settings = generateDefaultSettings(compiledSettingsSchema, context);
     return {
