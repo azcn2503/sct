@@ -41,14 +41,14 @@ export default function reducer(state = defaultState, action: any) {
     }
 
     case actions.END_ENCOUNTER: {
-      const { id } = action;
+      const { id, endTime } = action;
       return {
         ...state,
         encounters: state.encounters.map((encounter: any) => {
           if (encounter.id === id) {
             return {
               ...encounter,
-              endTime: Date.now()
+              endTime: endTime || Date.now()
             };
           }
           return encounter;

@@ -7,13 +7,15 @@ export const SELECT_ENCOUNTER = 'SELECT_ENCOUNTER';
 let encounterActive = false;
 let encounterId = 0;
 let encounterTimeout = null;
+let lastDamageTimestamp: Date | null = null;
 
 export function endEncounter() {
   return function endEncounterThunk(dispatch) {
     clearTimeout(encounterTimeout);
     dispatch({
       type: END_ENCOUNTER,
-      id: encounterId
+      id: encounterId,
+      endTime: lastDamageTimestamp
     });
     encounterId += 1;
     encounterActive = false;
@@ -25,6 +27,8 @@ export function registerDamage(payload, plugin) {
   return dispatch => {
     // Clear the existing encounter timeout if it is set
     clearTimeout(encounterTimeout);
+
+    lastDamageTimestamp = Date.now();
 
     // End the encounter after 4 seconds
     encounterTimeout = setTimeout(() => {
