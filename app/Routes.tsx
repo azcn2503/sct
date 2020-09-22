@@ -5,6 +5,7 @@ import App from './containers/App';
 import Activity from './containers/Activity';
 import Settings from './containers/Settings';
 import Plugins from './containers/Plugins';
+import Triggers from './containers/Triggers';
 
 export default function Routes() {
   return (
@@ -14,6 +15,7 @@ export default function Routes() {
         <Route path={routes.ACTIVITY.path} exact component={Activity} />
         <Route path={routes.SETTINGS.path} exact component={Settings} />
         <Route path={routes.PLUGINS.path} exact component={Plugins} />
+        <Route path={routes.TRIGGERS.path} exact component={Triggers} />
       </Switch>
     </App>
   );

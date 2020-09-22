@@ -4,7 +4,7 @@ import { clone, throttle } from 'lodash';
 
 import { setStatusMessage } from '../actions/status';
 import { compilePlugin } from '../actions/plugins';
-import { getPluginContext } from '../utils/plugins';
+import { getPluginEnv } from '../utils/plugins';
 
 /**
  * MonitorPlugin will establish a reverse file stream on the log file.
@@ -24,14 +24,14 @@ export default function MonitorPlugin({ logFilePath, plugin, dispatch, tail }) {
   function onLine(line) {
     if (!compiled) return;
     const pos = clone(tail.queue[0]);
-    const pluginContext = getPluginContext(
+    const pluginEnv = getPluginEnv(
       { logFilePath, plugin, line, pos },
       dispatch
     );
     setStatusMessageThrottled.current(
       `${plugin.manifest.id} processing ${pos.start}-${pos.end}`
     );
-    compiled.plugin(pluginContext);
+    compiled.plugin(pluginEnv);
   }
 
   useEffect(() => {
@@ -43,15 +43,15 @@ export default function MonitorPlugin({ logFilePath, plugin, dispatch, tail }) {
   // Compile on first mount
   useEffect(() => {
     if (compiled) return;
-    const pluginContext = getPluginContext({ logFilePath, plugin }, dispatch);
-    dispatch(compilePlugin(plugin.manifest.id, pluginContext));
+    const pluginEnv = getPluginEnv({ logFilePath, plugin }, dispatch);
+    dispatch(compilePlugin(plugin.manifest.id, pluginEnv));
   }, []);
 
   // Compile if log file changes and plugin is enabled
   useEffect(() => {
     if (!isEnabled || !logFilePath) return;
-    const pluginContext = getPluginContext({ logFilePath, plugin }, dispatch);
-    dispatch(compilePlugin(plugin.manifest.id, pluginContext));
+    const pluginEnv = getPluginEnv({ logFilePath, plugin }, dispatch);
+    dispatch(compilePlugin(plugin.manifest.id, pluginEnv));
   }, [logFilePath]);
 
   return null;

@@ -94,7 +94,7 @@ export function scanReverse(id, context) {
   });
 }
 
-export function getPluginContext(baseContext, dispatch) {
+export function getPluginEnv(baseContext, dispatch) {
   const registerDamage = args =>
     dispatch(activityActions.registerDamage(args, baseContext.plugin));
   const endEncounter = args => dispatch(activityActions.endEncounter(args));

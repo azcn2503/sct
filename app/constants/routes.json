@@ -9,6 +9,11 @@
     "icon": null,
     "label": "Plugins"
   },
+  "TRIGGERS": {
+    "path": "/triggers",
+    "icon": null,
+    "label": "Triggers"
+  },
   "SETTINGS": {
     "path": "/settings",
     "icon": null,

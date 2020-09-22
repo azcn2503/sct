@@ -6,6 +6,7 @@ import plugins from './plugins';
 import activity from './activity';
 import status from './status';
 import compiled from './compiled';
+import triggers from './triggers';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
@@ -14,7 +15,8 @@ export default function createRootReducer(history: History) {
     plugins,
     activity,
     status,
-    compiled
+    compiled,
+    triggers
   });
 }
 
